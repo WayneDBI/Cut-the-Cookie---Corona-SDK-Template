@@ -17,13 +17,12 @@
 ---------------------------------------------------------------------------------
 -- import any external modules
 ---------------------------------------------------------------------------------
-local storyboard		= require( "storyboard" )
+local composer 				= require( "composer" )
+local scene 				= composer.newScene()
 local myGlobalData 		= require( "globalData" )
 local ui 				= require("ui")
 local widget 			= require "widget"
 local dataReset			= require("actor_ResetVariables")
-
-local scene 			= storyboard.newScene()
 
 ---------------------------------------------------------------------------------
 -- function: resume play button
@@ -32,7 +31,7 @@ function buttonContinue()
 	audio.play(sfx_Select)
 	-- Hide this overlay, and continue playing
 	myGlobalData.levelPaused = false
-	storyboard.hideOverlay("slideDown", 300)
+	composer.hideOverlay("slideDown", 300)
 	return true
 end
 
@@ -47,7 +46,7 @@ function buttonLevelSelect()
 	
 	local function performMyAction()
 	print("back to Level Select")
-		storyboard.gotoScene( "screenLevelSelect", "crossFade", 100  )
+		composer.gotoScene( "screenLevelSelect", "crossFade", 100  )
 	end
 
 	--Short delay before we go back to the scene
@@ -66,7 +65,7 @@ function buttonBackToMenu()
 	
 	local function performMyAction()
 	print("back to start")
-		storyboard.gotoScene( "screenStart", "crossFade", 100  )
+		composer.gotoScene( "screenStart", "crossFade", 100  )
 	end
 
 	--Short delay before we go back to the scene
@@ -82,15 +81,17 @@ end
 ---------------------------------------------------------------------------------
 function restartLevel()
 	local buildPathToLevel = myGlobalData.worldPath.."World"..myGlobalData.worldSelected.."_Levels.level"..myGlobalData.myLevel
-	storyboard.gotoScene( buildPathToLevel )
+	composer.gotoScene( buildPathToLevel )
 	return true
 end
 
 
+-- "scene:create()"
+function scene:create( event )
 
--- Called when the scene's view does not exist:
-function scene:createScene( event )
-	local screenGroup = self.view
+   -- Initialize the scene here.
+   -- Example: add display objects to "sceneGroup", add touch listeners, etc.
+   	local screenGroup = self.view
 	
 	---------------------------------------------------------------------------------
 	-- Set the game mode to PAUSE
@@ -152,44 +153,59 @@ function scene:createScene( event )
 	buttonText.x = myGlobalData._w/2; buttonText.y = 320; buttonText:play()
 	screenGroup:insert(buttonText)
 	-------------------------------------------------------------------------------------------------------------
-
 end
 
 
--- Called immediately after scene has moved onscreen:
-function scene:enterScene( event )
 
+-- "scene:show()"
+function scene:show( event )
+
+   local sceneGroup = self.view
+   local phase = event.phase
+
+   if ( phase == "will" ) then
+      -- Called when the scene is still off screen (but is about to come on screen).
+   elseif ( phase == "did" ) then
+      -- Called when the scene is now on screen.
+      -- Insert code here to make the scene come alive.
+      -- Example: start timers, begin animation, play audio, etc.
+   end
 end
 
+-- "scene:hide()"
+function scene:hide( event )
 
--- Called when scene is about to move offscreen:
-function scene:exitScene( event )
+   local sceneGroup = self.view
+   local phase = event.phase
 
+   if ( phase == "will" ) then
+      -- Called when the scene is on screen (but is about to go off screen).
+      -- Insert code here to "pause" the scene.
+      -- Example: stop timers, stop animation, stop audio, etc.
+   elseif ( phase == "did" ) then
+      -- Called immediately after scene goes off screen.
+   end
 end
 
+-- "scene:destroy()"
+function scene:destroy( event )
 
--- Called prior to the removal of scene's "view" (display group)
-function scene:destroyScene( event )
-	
+   local sceneGroup = self.view
+
+   -- Called prior to the removal of scene's view ("sceneGroup").
+   -- Insert code here to clean up the scene.
+   -- Example: remove display objects, save state, etc.
 end
-
 ---------------------------------------------------------------------------------
 -- END OF YOUR IMPLEMENTATION
 ---------------------------------------------------------------------------------
 
--- "createScene" event is dispatched if scene's view does not exist
-scene:addEventListener( "createScene", scene )
+-- Listener setup
+scene:addEventListener( "create", scene )
+scene:addEventListener( "show", scene )
+scene:addEventListener( "hide", scene )
+scene:addEventListener( "destroy", scene )
 
--- "enterScene" event is dispatched whenever scene transition has finished
-scene:addEventListener( "enterScene", scene )
-
--- "exitScene" event is dispatched before next scene's transition begins
-scene:addEventListener( "exitScene", scene )
-
--- "destroyScene" event is dispatched before view is unloaded, which can be
--- automatically unloaded in low memory situations, or explicitly via a call to
--- storyboard.purgeScene() or storyboard.removeScene().
-scene:addEventListener( "destroyScene", scene )
 
 ---------------------------------------------------------------------------------
 

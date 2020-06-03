@@ -104,8 +104,6 @@ physics.setContinuous( true )
 -- Called when the scene's view does not exist:
 ------------------------------------------------------------------------------------------------------------------------------------
 
-
-
 -- "scene:create()"
 function scene:create( event )
 
@@ -416,6 +414,12 @@ end
 ------------------------------------------------------------------------------------------------------------------------------------
 local function updateScene()
 	
+	-- if myGlobalData.levelFailed then
+	-- 	print("myGlobalData.levelFailed: true")		
+	-- else 
+	-- 	print("myGlobalData.levelFailed: false")
+	-- end
+
 	--If any of our Actors trigger this variable - we'll reset the current scene!
 	if (myGlobalData.levelFailed==true) then
 		replayLevel()

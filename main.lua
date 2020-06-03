@@ -44,7 +44,7 @@ myGlobalData.maxLevels				= 25							-- How many levels do EACH world have?
 myGlobalData.maxWorlds				= 4								-- How many worlds for the WHOLE game?
 
 myGlobalData.levelReset				= false							-- We use this flag to help reset the level..
-myGlobalData.levelCompleted			= false							-- We use this flag to indicate the user has completed the level..
+myGlobalData.levelCompleted		= false							-- We use this flag to indicate the user has completed the level..
 myGlobalData.levelFailed			= false							-- We use this flag to indicate the user has failed a level..
 myGlobalData.levelPaused			= false							-- has the user paused the level/game?..
 

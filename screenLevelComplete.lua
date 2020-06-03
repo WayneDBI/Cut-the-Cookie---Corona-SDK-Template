@@ -17,12 +17,12 @@
 ---------------------------------------------------------------------------------
 -- import any external modules
 ---------------------------------------------------------------------------------
-local storyboard		= require( "storyboard" )
-local scene 			= storyboard.newScene()
-local myGlobalData 		= require( "globalData" )
-local ui 				= require("ui")
-local widget 			= require "widget"
-local dataReset			= require("actor_ResetVariables")
+local composer          = require( "composer" )
+local scene             = composer.newScene()
+local myGlobalData      = require( "globalData" )
+local ui                = require("ui")
+local widget            = require "widget"
+local dataReset         = require("actor_ResetVariables")
 
 local star1 = 0
 local star2 = 0
@@ -32,7 +32,7 @@ local star3 = 0
 -- Get the LEVEL and WORLD stars/unlocked data
 ---------------------------------------------------------------
 local statsSetup = {}	-- This is our WORLD and LEVEL data table. We'll store how many stars were collected etc in here..
-statsSetup = saveDataTable.levelStats
+statsSetup       = saveDataTable.levelStats
 
 
 ---------------------------------------------------------------
@@ -49,15 +49,13 @@ function buttonReplay()
 		myGlobalData.endGame = false
 				
 		local buildPathToLevel = myGlobalData.worldPath.."World"..myGlobalData.worldSelected.."_Levels.level"..myGlobalData.myLevel
-		--storyboard.gotoScene( buildPathToLevel )	--This is our main menu
 		
 		local function restartLevel()
-			storyboard.gotoScene( buildPathToLevel )
+			composer.gotoScene( buildPathToLevel )
 		end
 	
 		--Short delay before we go back to the scene
 		local delayAction = timer.performWithDelay(20, restartLevel )
-		--delayAction.resetData = true
 
 	return true
 end
@@ -81,9 +79,13 @@ function buttonNext()
 		myGlobalData.myLevel = myGlobalData.myLevel + 1
 		myGlobalData.level = myGlobalData.level + 1
 		
-		local buildPathToLevel = myGlobalData.worldPath.."World"..myGlobalData.worldSelected.."_Levels.level"..myGlobalData.myLevel
-		storyboard.gotoScene( buildPathToLevel )	--This is our main menu
+		-- local buildPathToLevel = myGlobalData.worldPath.."World"..myGlobalData.worldSelected.."_Levels.level"..myGlobalData.myLevel
 
+		-- print(buildPathToLevel)
+
+		local buildPathToLevel = myGlobalData.worldPath.."World"..myGlobalData.worldSelected.."_Levels.level"..myGlobalData.myLevel
+		print(buildPathToLevel)
+		composer.gotoScene( buildPathToLevel )	--This is our main menu
 	
 	return true
 end
@@ -97,7 +99,7 @@ function buttonBackToMenu()
 		
 		local function performMyAction()
 		print("back to start")
-			storyboard.gotoScene( "screenStart", "crossFade", 100  )
+		   composer.gotoScene( "screenStart", "crossFade", 100  )
 		end
 	
 		--Short delay before we go back to the scene
@@ -113,15 +115,15 @@ end
 ---------------------------------------------------------------
 function restartLevel()
 	local buildPathToLevel = myGlobalData.worldPath.."World"..myGlobalData.worldSelected.."_Levels.level"..myGlobalData.myLevel
-	storyboard.gotoScene( buildPathToLevel )
+	composer.gotoScene( buildPathToLevel )
 	return true
 end
 
 
-
--- Called when the scene's view does not exist:
-function scene:createScene( event )
-	local screenGroup = self.view
+function scene:create( event )
+   -- Initialize the scene here.
+   -- Example: add display objects to "sceneGroup", add touch listeners, etc.
+   	local screenGroup = self.view
 	
 	---------------------------------------------------------------
 	-- Set the game mode to PAUSE
@@ -241,7 +243,6 @@ function scene:createScene( event )
 		audio.play(sfx_Perfect)
 	end
 
-
 	-------------------------------------------------------------------------------------------------------------
 	-- Create the INFO TEXT Results
 	-------------------------------------------------------------------------------------------------------------
@@ -249,63 +250,41 @@ function scene:createScene( event )
 	infoText:setSequence( "textScoreInfo"..getStarCount )
 	infoText.x = 160; infoText.y = 110; infoText:play()
 	screenGroup:insert(infoText)
-	
 
 end
 
 
--- Called immediately after scene has moved onscreen:
-function scene:enterScene( event )
+function scene:show( event )
+
+   local sceneGroup = self.view
+   local phase = event.phase
+
+   if ( phase == "will" ) then
+      -- Called when the scene is still off screen (but is about to come on screen).
+   elseif ( phase == "did" ) then
+      -- Called when the scene is now on screen.
+      -- Insert code here to make the scene come alive.
+      -- Example: start timers, begin animation, play audio, etc.
 
 	myGlobalData.endGame = true
-	
---[[
-	local buildPathToLevel = myGlobalData.worldPath.."World"..myGlobalData.worldSelected.."_Levels.level"..myGlobalData.myLevel
-	local buildLevelName = "level"..myGlobalData.myLevel
-	
-	print("Removing Scene: "..buildPathToLevel)
-	print("Removing Scene(Name): "..buildLevelName)
-	storyboard.purgeScene( buildPathToLevel )
-	storyboard.removeScene( buildPathToLevel )
-
-	storyboard.purgeScene( buildLevelName )
-	storyboard.removeScene( buildLevelName )
---]]
 
 	--CLEAR ALL LEVELS, FROM ALL WORLDDS !!!!
 	for j = 1,myGlobalData.maxWorlds do
 		for i = 1,myGlobalData.maxLevels do
 			local buildPathToLevel = myGlobalData.worldPath.."World"..j.."_Levels.level"..i
 			local buildLevelName = "level"..myGlobalData.myLevel
-			--print("Removing Scene: "..buildPathToLevel)
-			--print("Removing Scene(Name): "..buildLevelName)
-			storyboard.purgeScene( buildPathToLevel )
-			storyboard.removeScene( buildPathToLevel )
-
-			storyboard.purgeScene( buildLevelName )
-			storyboard.removeScene( buildLevelName )
+			composer.removeScene( buildPathToLevel )
+			composer.removeScene( buildLevelName )
 		end
 	end
 
-
-
-	storyboard.purgeScene( "screenGamePause" )
-	storyboard.removeScene( "screenGamePause" )
-	storyboard.purgeScene( "screenResetLevel" )
-	storyboard.removeScene( "screenResetLevel" )
-	storyboard.purgeScene( "screenStart" )
-	storyboard.removeScene( "screenStart" )
-	storyboard.purgeScene( "screenOptions" )
-	storyboard.removeScene( "screenOptions" )
-
-	storyboard.purgeScene( "screenWorldSelect" )
-	storyboard.removeScene( "screenWorldSelect" )
-	storyboard.purgeScene( "screenLevelSelect" )
-	storyboard.removeScene( "screenLevelSelect" )
-	
-	--storyboard.purgeScene( "screenLevelComplete" )
-	--storyboard.removeScene( "screenLevelComplete" )
-
+	composer.removeScene( "screenGamePause" )
+	composer.removeScene( "screenWorldSelect" )
+	composer.removeScene( "screenResetLevel" )
+	composer.removeScene( "screenStart" )
+	composer.removeScene( "screenOptions" )
+	composer.removeScene( "screenWorldSelect" )
+	composer.removeScene( "screenLevelSelect" )
 	
 	--Remove any of the GAME actor modules from memory too.
 	package.loaded["actor_AreaBoundry"] = nil	
@@ -318,39 +297,46 @@ function scene:enterScene( event )
 	package.loaded["actor_Spikes"] = nil	
 	package.loaded["actor_Star"] = nil	
 	package.loaded["actor_Cookie"] = nil	
-
+   end
 end
 
 
--- Called when scene is about to move offscreen:
-function scene:exitScene( event )
-	
 
+
+function scene:hide( event )
+
+   local sceneGroup = self.view
+   local phase = event.phase
+
+   if ( phase == "will" ) then
+      -- Called when the scene is on screen (but is about to go off screen).
+      -- Insert code here to "pause" the scene.
+      -- Example: stop timers, stop animation, stop audio, etc.
+   elseif ( phase == "did" ) then
+      -- Called immediately after scene goes off screen.
+   end
 end
 
 
--- Called prior to the removal of scene's "view" (display group)
-function scene:destroyScene( event )
-	
+-- "scene:destroy()"
+function scene:destroy( event )
+
+   local sceneGroup = self.view
+
+   -- Called prior to the removal of scene's view ("sceneGroup").
+   -- Insert code here to clean up the scene.
+   -- Example: remove display objects, save state, etc.
 end
 
 ---------------------------------------------------------------------------------
 -- END OF YOUR IMPLEMENTATION
 ---------------------------------------------------------------------------------
 
--- "createScene" event is dispatched if scene's view does not exist
-scene:addEventListener( "createScene", scene )
-
--- "enterScene" event is dispatched whenever scene transition has finished
-scene:addEventListener( "enterScene", scene )
-
--- "exitScene" event is dispatched before next scene's transition begins
-scene:addEventListener( "exitScene", scene )
-
--- "destroyScene" event is dispatched before view is unloaded, which can be
--- automatically unloaded in low memory situations, or explicitly via a call to
--- storyboard.purgeScene() or storyboard.removeScene().
-scene:addEventListener( "destroyScene", scene )
+-- Listener setup
+scene:addEventListener( "create", scene )
+scene:addEventListener( "show", scene )
+scene:addEventListener( "hide", scene )
+scene:addEventListener( "destroy", scene )
 
 ---------------------------------------------------------------------------------
 

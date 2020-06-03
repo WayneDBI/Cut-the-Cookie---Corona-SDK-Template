@@ -34,7 +34,8 @@ local Rope				= require("actor_Rope")
 local Spike				= require("actor_Spikes")
 local levelBackdrop		= require("actor_LevelBackdrop")
 --local SlashEffect		= require("actor_SlashEffect")
-local storyboard		= require("storyboard")
+local composer 			= require( "composer" )
+local scene 			= composer.newScene()
 require "sprite"
 
 ------------------------------------------------------------------------------------------------------------------------------------
@@ -42,8 +43,6 @@ require "sprite"
 ------------------------------------------------------------------------------------------------------------------------------------
 local bgCreate
 local previousStarsCollected	= 0
-local scene						= storyboard.newScene()
-local sceneHudGroup				= display.newGroup()
 local levelCompleted			= false
 local screenW 					= display.contentWidth
 local screenH 					= display.contentHeight
@@ -95,7 +94,7 @@ physics.start()
 physics.setScale( 30 )
 physics.setGravity( 0, 6 )
 physics.setPositionIterations(40)
-physics.setDrawMode( "hybrid" ) --Enable to see the Physics world in action
+--physics.setDrawMode( "hybrid" ) --Enable to see the Physics world in action
 physics.setContinuous( true )
 ------------------------------------------------------------------------------------------------------------------------------------
 
@@ -104,10 +103,16 @@ physics.setContinuous( true )
 ------------------------------------------------------------------------------------------------------------------------------------
 -- Called when the scene's view does not exist:
 ------------------------------------------------------------------------------------------------------------------------------------
-function scene:createScene( event )
 
-	local screenGroup = self.view
+-- "scene:create()"
+function scene:create( event )
+
+   -- Initialize the scene here.
+   -- Example: add display objects to "sceneGroup", add touch listeners, etc.
+   	local screenGroup = self.view
 	myGlobalData.endGame = false
+
+	local sceneHudGroup				= display.newGroup()
 	
 	------------------------------------------------------------------------------------------------------------------------------------
 	--Set up the SIZE for the level (Defaults to max width/Height) of the users device: Insert the Walls
@@ -314,6 +319,54 @@ function scene:createScene( event )
 end -- Setting up the CREATE SCENE function
 
 
+-- "scene:show()"
+function scene:show( event )
+
+   local sceneGroup = self.view
+   local phase = event.phase
+
+   if ( phase == "will" ) then
+      -- Called when the scene is still off screen (but is about to come on screen).
+   elseif ( phase == "did" ) then
+      -- Called when the scene is now on screen.
+      -- Insert code here to make the scene come alive.
+      -- Example: start timers, begin animation, play audio, etc.
+
+      	--Remove ALL other levels and scenes EXCEPT the Current one!
+
+   end
+end
+
+-- "scene:hide()"
+function scene:hide( event )
+
+   local sceneGroup = self.view
+   local phase = event.phase
+
+   if ( phase == "will" ) then
+      -- Called when the scene is on screen (but is about to go off screen).
+      -- Insert code here to "pause" the scene.
+      -- Example: stop timers, stop animation, stop audio, etc.
+   elseif ( phase == "did" ) then
+      -- Called immediately after scene goes off screen.
+   end
+end
+
+-- "scene:destroy()"
+function scene:destroy( event )
+
+   local sceneGroup = self.view
+
+   -- Called prior to the removal of scene's view ("sceneGroup").
+   -- Insert code here to clean up the scene.
+   -- Example: remove display objects, save state, etc.
+
+    Runtime:removeEventListener("enterFrame", updateScene)
+    Runtime:removeEventListener("collision", onGlobalCollision)
+    Runtime:removeEventListener("touch", drawSlashLine)
+
+end
+
 ------------------------------------------------------------------------------------------------------------------------------------
 -- Our global collision event is looking for the slashes on the ropes
 ------------------------------------------------------------------------------------------------------------------------------------
@@ -433,11 +486,11 @@ local function updateScene()
 		------------------------------------------------------------------------------------------
 
 		local function endTheLevel()
-			storyboard.gotoScene( "screenLevelComplete", "crossFade", 500  )
+			composer.gotoScene( "screenLevelComplete", "crossFade", 500  )
 		end
 
 		local function endTheWholeGame()
-			storyboard.gotoScene( "screenGameComplete", "crossFade", 500  )
+			composer.gotoScene( "screenGameComplete", "crossFade", 500  )
 		end
 
 		------------------------------------------------------------------------------------------
@@ -466,7 +519,7 @@ function replayLevel()
 		myGlobalData.starsCollected = 0
 
 		local function restartLevel()
-			storyboard.gotoScene( "screenResetLevel", "crossFade", 100  )
+			composer.gotoScene( "screenResetLevel", "crossFade", 100  )
 		end
 	
 		--Short delay before we go back to the scene
@@ -492,7 +545,7 @@ function showMenu()
 	effect = "slideDown", time = 200, isModal=true
 	}
 
-	storyboard.showOverlay("screenGamePause", options )	--This is our Pause Screen
+	composer.showOverlay("screenGamePause", options )	--This is our Pause Screen
 
 	return true
 end
@@ -593,39 +646,6 @@ function playRandomSlashSound()
 end
 
 
--- Called immediately after scene has moved onscreen:
-function scene:enterScene( event )
-	--Remove ALL other levels and scenes EXCEPT the Current one!
-	for i = 1,myGlobalData.maxWorlds do
-		for j = 1,myGlobalData.maxLevels do
-			local buildPathToLevel = myGlobalData.worldPath.."World"..i.."_Levels.level"..j
-			local buildLevelName = "level"..j
-			if (j ~= myGlobalData.myLevel) then
-				storyboard.purgeScene( buildPathToLevel )
-				storyboard.removeScene( buildPathToLevel )
-				storyboard.purgeScene( buildLevelName )
-				storyboard.removeScene( buildLevelName )
-			end
-		end
-	end
-
-	--local buildPathToLevel = myGlobalData.worldPath.."World"..myGlobalData.worldSelected.."_Levels.level"..myGlobalData.myLevel
-	--local buildLevelName = "level"..myGlobalData.myLevel
-	--storyboard.purgeScene( "screenResetLevel" )
-	--storyboard.removeScene( "screenResetLevel" )
-	storyboard.purgeScene( "screenStart" )
-	storyboard.removeScene( "screenStart" )
-	storyboard.purgeScene( "screenOptions" )
-	storyboard.removeScene( "screenOptions" )
-	storyboard.purgeScene( "screenWorldSelect" )
-	storyboard.removeScene( "screenWorldSelect" )
-	storyboard.purgeScene( "screenLevelSelect" )
-	storyboard.removeScene( "screenLevelSelect" )
-	storyboard.purgeScene( "screenLevelComplete" )
-	storyboard.removeScene( "screenLevelComplete" )
-
-end
-
 -- Called when scene is about to move offscreen:
 function scene:exitScene( event )
 
@@ -651,14 +671,11 @@ end
 -- END OF YOUR IMPLEMENTATION
 -----------------------------------------------------------------------------------------
 
--- "createScene" event is dispatched if scene's view does not exist
-scene:addEventListener( "createScene", scene )
-
--- "enterScene" event is dispatched whenever scene transition has finished
-scene:addEventListener( "enterScene", scene )
-
--- "exitScene" event is dispatched whenever before next scene's transition begins
-scene:addEventListener( "exitScene", scene )
+-- Listener setup
+scene:addEventListener( "create", scene )
+scene:addEventListener( "show", scene )
+scene:addEventListener( "hide", scene )
+scene:addEventListener( "destroy", scene )
 
 -- "destroyScene" event is dispatched before view is unloaded, which can be
 -- automatically unloaded in low memory situations, or explicitly via a call to
