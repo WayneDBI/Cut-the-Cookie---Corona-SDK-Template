@@ -296,12 +296,12 @@ function scene:show( event )
       -- Insert code here to make the scene come alive.
       -- Example: start timers, begin animation, play audio, etc.
 
-      	myGlobalData.levelFailed 	= true
+      	myGlobalData.levelFailed 	= false
 		myGlobalData.gameScore 		= 0
-		myGlobalData.levelReset 	= true		
+		myGlobalData.levelReset 	= false	
 		myGlobalData.starsCollected = 0
 		
-		myGlobalData.endGame = true
+		myGlobalData.endGame = false
 		myGlobalData.levelPaused = false
 		
 		local previousScene = composer.getSceneName( "previous" )

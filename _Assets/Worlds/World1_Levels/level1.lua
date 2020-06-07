@@ -14,6 +14,8 @@
 -- WORLD 1  : level1.lua
 ------------------------------------------------------------------------------------------------------------------------------------
 
+--change to composer and save as dbi and removeEventListener and remove good old scene
+
 ------------------------------------------------------------------------------------------------------------------------------------
 -- Require all of the external modules for this level
 ------------------------------------------------------------------------------------------------------------------------------------
@@ -322,6 +324,10 @@ function scene:show( event )
    local phase = event.phase
 
    if ( phase == "will" ) then
+   
+	  composer.removeScene( "screenLevelSelect" )
+	  composer.removeScene( "screenLevelComplete" ) --remove overlay scene for replay the scene
+	  composer.removeScene( "screenResetLevel" )
       -- Called when the scene is still off screen (but is about to come on screen).
    elseif ( phase == "did" ) then
       -- Called when the scene is now on screen.
@@ -340,6 +346,11 @@ function scene:hide( event )
    local phase = event.phase
 
    if ( phase == "will" ) then
+   
+    Runtime:removeEventListener("enterFrame", updateScene)
+    Runtime:removeEventListener("collision", onGlobalCollision)
+    Runtime:removeEventListener("touch", drawSlashLine)
+   
       -- Called when the scene is on screen (but is about to go off screen).
       -- Insert code here to "pause" the scene.
       -- Example: stop timers, stop animation, stop audio, etc.
@@ -357,15 +368,13 @@ function scene:destroy( event )
    -- Insert code here to clean up the scene.
    -- Example: remove display objects, save state, etc.
 
-    Runtime:removeEventListener("enterFrame", updateScene)
-    Runtime:removeEventListener("collision", onGlobalCollision)
-    Runtime:removeEventListener("touch", drawSlashLine)
+
 
 end
 
 
 -- Called when scene is about to move offscreen:
-function overlayEnded( event )
+function scene:overlayEnded( event )
     --Restart the physics engine
     physics.start();
     --Restart any animations from external modules
@@ -495,9 +504,10 @@ local function updateScene()
 		------------------------------------------------------------------------------------------
 		-- Save the revised Level data back to our JSON file on the device
 		------------------------------------------------------------------------------------------
+
 		saveDataTable.levelStats 		= statsSetup
 		saveDataTable.gameCompleted 	= myGlobalData.allLevelsWon
-		loadsave.saveTable(saveDataTable, "dba_ctr_template_data.json")
+		loadsave.saveTable(saveDataTable, "dbi_ctr_template_data.json")
 		------------------------------------------------------------------------------------------
 
 		local function endTheLevel()
@@ -527,6 +537,11 @@ end --End Function
 -- replay/reset the current level
 ------------------------------------------------------------------------------------------------------------------------------------
 function replayLevel()
+
+		--necessary nevertheless scene is removing ten times 
+		Runtime:removeEventListener("enterFrame", updateScene)
+		Runtime:removeEventListener("collision", onGlobalCollision)
+		Runtime:removeEventListener("touch", drawSlashLine)
 	
 		myGlobalData.levelFailed 	= true
 		myGlobalData.gameScore 		= 0

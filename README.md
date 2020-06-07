@@ -1,13 +1,17 @@
-# Cut the Cookie | Corona SDK Template
+# Cut the Cookie | Solar2D / Corona SDK Template
+### Solar2D Compatible | Version 2020.3598
+
 [![N](https://www.deepblueideas.com/dbiNew2/wp-content/uploads/2015/08/cutTheCookieLarge.jpg)](https://www.deepblueideas.com/product/cut-the-cookie/)
 
 [![N](https://www.deepblueideas.com/dbiNew2/wp-content/uploads/2015/08/a.jpeg)](https://www.deepblueideas.com/product/cut-the-cookie/)
 
 ```sh
+Solar2D SDK 2020.3598
 Corona SDK 2018.3326
-Last tested running using  |  Corona SDK 2018.3326.
 ©2020 Wayne Hawksworth - Deep Blue Ideas
+Solar2D Conversion by Franck Blanck
 ```
+
 **Graphics, Art and Audio not to be used in production**
 
 Cut the Cookie is a template based on the famous Cut the Rope smash hit game. From this template you’ll be able to build dozens of games using the mechanics inside. Simply add your SWEET or COOKIE, position the stars and some ropes – and off you go. The template includes a WORLD SELECTION followed by a LEVEL SELECTION system, so you can have hundreds of levels for your game/users.
@@ -53,8 +57,6 @@ https://youtu.be/gHZY5mNH6xQ
 - Make a full Game super quick
 - External module controlled sprites
 
-### Todos
- - Convert to solar2d
 
 #### Developed by
 [![N](https://www.deepblueideas.com/dbiNew2/wp-content/uploads/2014/09/web_logo_5.png)](https://www.deepblueideas.com)

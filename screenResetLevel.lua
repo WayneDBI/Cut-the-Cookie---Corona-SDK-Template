@@ -14,6 +14,14 @@
 -- screenResetLevel.lua
 ------------------------------------------------------------------------------------------------------------------------------------
 
+--[[ time consuming issue: 
+A. User starts a level
+B. User presets the menu button
+C. UI / Physics is pauses 'with overlay'
+D. User selects Continue
+E. Game restarts, but the physics engine no longer automatically resumes after an overlay is hidden ]]--
+
+
 ---------------------------------------------------------------
 -- Require all of the external modules for this level
 ---------------------------------------------------------------
@@ -52,10 +60,10 @@ function scene:create( event )
 	---------------------------------------------------------------
 	-- simply create a WHITE square.
 	---------------------------------------------------------------
-	local myRectangle = display.newRect(0, 0, myGlobalData._w, myGlobalData._h)
+	--[[local myRectangle = display.newRect(0, 0, myGlobalData._w, myGlobalData._h)
 	myRectangle.anchorX = 0.0		-- Graphics 2.0 Anchoring method
 	myRectangle.anchorY = 0.0		-- Graphics 2.0 Anchoring method
-	screenGroup:insert(myRectangle)
+	screenGroup:insert(myRectangle) ]]--
 	
 	audio.play(sfx_Select)
 
@@ -85,9 +93,11 @@ function scene:show( event )
 
 		composer.removeScene( buildPathToLevel )
 		composer.removeScene( buildLevelName )
+		
 
 		--Short delay before we go back to the scene
 		timer.performWithDelay(100, restartLevel )
+		--restartLevel()
 
    end
 end

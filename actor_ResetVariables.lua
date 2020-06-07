@@ -27,6 +27,9 @@ local resetVariables = {}
 		myGlobalData.starCollected 		= false	
 
 		myGlobalData.endGame			= false
+		
+
+	
 	end
 
 

@@ -47,6 +47,9 @@ function buttonReplay()
 
 		dataReset.VariableReset()
 		myGlobalData.endGame = false
+		
+				-- Save the NEW json file, for referencing later..
+	loadsave.saveTable(saveDataTable, "dbi_ctr_template_data.json")
 				
 		local buildPathToLevel = myGlobalData.worldPath.."World"..myGlobalData.worldSelected.."_Levels.level"..myGlobalData.myLevel
 		
@@ -195,6 +198,8 @@ function scene:create( event )
 	buttonText.x = buttonBase.x; buttonText.y = buttonBase.y; buttonText:play()
 	screenGroup:insert(buttonText)
 	-------------------------------------------------------------------------------------------------------------
+
+	--loadsave.loadTable("dbi_ctr_template_data.json")
 
 	-------------------------------------------------------------------------------------------------------------
 	-- Create the 3 LARGE STAR RESULTS

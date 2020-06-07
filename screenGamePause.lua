@@ -18,11 +18,13 @@
 -- import any external modules
 ---------------------------------------------------------------------------------
 local composer 				= require( "composer" )
-local scene 				= composer.newScene()
 local myGlobalData 		= require( "globalData" )
 local ui 				= require("ui")
 local widget 			= require "widget"
 local dataReset			= require("actor_ResetVariables")
+
+
+local scene 				= composer.newScene()
 
 ---------------------------------------------------------------------------------
 -- function: resume play button
@@ -31,6 +33,12 @@ function buttonContinue()
 	audio.play(sfx_Select)
 	-- Hide this overlay, and continue playing
 	myGlobalData.levelPaused = false
+	
+	
+	--physics.start()
+
+	--Hero.pausePlaySprite()
+	
 	composer.hideOverlay("slideDown", 300)
 	return true
 end
@@ -177,8 +185,13 @@ function scene:hide( event )
 
    local sceneGroup = self.view
    local phase = event.phase
+   local parent = event.parent 
 
    if ( phase == "will" ) then
+   
+   
+	
+	parent:overlayEnded()
       -- Called when the scene is on screen (but is about to go off screen).
       -- Insert code here to "pause" the scene.
       -- Example: stop timers, stop animation, stop audio, etc.

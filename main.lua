@@ -15,7 +15,7 @@
 ------------------------------------------------------------------------------------------------------------------------------------
 
 display.setStatusBar( display.HiddenStatusBar )
-local storyboard    = require "storyboard"
+--local storyboard    = require "storyboard"
 
 -- require controller module
 local composer      = require( "composer" )

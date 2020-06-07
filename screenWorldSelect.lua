@@ -480,8 +480,8 @@ function scene:show( event )
 		local buildPathToLevel = myGlobalData.worldPath.."World"..myGlobalData.worldSelected.."_Levels.level"..myGlobalData.myLevel
 		local buildLevelName = "level"..myGlobalData.myLevel
 
-		print("Removing Scene: "..buildPathToLevel)
-		print("Removing Scene(Name): "..buildLevelName)
+		print("Removing Scene : "..buildPathToLevel)
+		print("Removing Scene(Name) : "..buildLevelName)
 
 		composer.removeScene( buildPathToLevel )
 		composer.removeScene( buildLevelName )

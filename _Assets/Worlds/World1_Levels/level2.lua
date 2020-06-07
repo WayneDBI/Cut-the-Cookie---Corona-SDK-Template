@@ -327,7 +327,13 @@ function scene:show( event )
 
    if ( phase == "will" ) then
       -- Called when the scene is still off screen (but is about to come on screen).
+	  composer.removeScene( "screenLevelSelect" )
+	  composer.removeScene( "screenLevelComplete" ) --remove overlay scene for replay the scene
+	  composer.removeScene( "screenResetLevel" )
+
    elseif ( phase == "did" ) then
+   
+
       -- Called when the scene is now on screen.
       -- Insert code here to make the scene come alive.
       -- Example: start timers, begin animation, play audio, etc.
@@ -364,6 +370,8 @@ function scene:destroy( event )
     Runtime:removeEventListener("enterFrame", updateScene)
     Runtime:removeEventListener("collision", onGlobalCollision)
     Runtime:removeEventListener("touch", drawSlashLine)
+	
+	print ("destroy level2")
 
 end
 
@@ -426,6 +434,7 @@ local function updateScene()
 			print("SAVING LEVEL DATA: "..myGlobalData.myLevel)
 			-- Save the NEW star count to the CORRECT table location!
 			statsSetup[myGlobalData.worldSelected][myGlobalData.myLevel] = {myGlobalData.starsCollected}
+			print("stars"..myGlobalData.starsCollected)
 		end
 	
 		------------------------------------------------------------------------------------------
@@ -482,7 +491,7 @@ local function updateScene()
 		------------------------------------------------------------------------------------------
 		saveDataTable.levelStats 		= statsSetup
 		saveDataTable.gameCompleted 	= myGlobalData.allLevelsWon
-		loadsave.saveTable(saveDataTable, "dba_ctr_template_data.json")
+		loadsave.saveTable(saveDataTable, "dbi_ctr_template_data.json")
 		------------------------------------------------------------------------------------------
 
 		local function endTheLevel()
@@ -512,7 +521,13 @@ end --End Function
 -- replay/reset the current level
 ------------------------------------------------------------------------------------------------------------------------------------
 function replayLevel()
-	
+
+
+		--Necessary
+		Runtime:removeEventListener("enterFrame", updateScene)
+		Runtime:removeEventListener("collision", onGlobalCollision)
+		Runtime:removeEventListener("touch", drawSlashLine)
+		
 		myGlobalData.levelFailed 	= true
 		myGlobalData.gameScore 		= 0
 		myGlobalData.levelReset 	= true		
@@ -540,6 +555,7 @@ function showMenu()
 	physics.pause()
 	
 	Hero.pausePlaySprite()
+	
 
 	local options = {
 	effect = "slideDown", time = 200, isModal=true
@@ -647,40 +663,41 @@ end
 
 
 -- Called when scene is about to move offscreen:
-function scene:exitScene( event )
+--[[function scene:exitScene( event )
 
-end
+end ]]--
 
 -- Called when scene is about to move offscreen:
 function scene:overlayEnded( event )
     --Restart the physics engine
+
+	--myGlobalData.levelPaused = false
+
     physics.start();
     --Restart any animations from external modules
-    Hero.pausePlaySprite()
+	
+	Hero.pausePlaySprite()
+    
 end
 
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:
-function scene:destroyScene( event )
+--[[ function scene:destroyScene( event )
     local group = self.view
     Runtime:removeEventListener("enterFrame", updateScene)
     Runtime:removeEventListener("collision", onGlobalCollision)
     Runtime:removeEventListener("touch", drawSlashLine)
-end
+end ]]--
 
 -----------------------------------------------------------------------------------------
 -- END OF YOUR IMPLEMENTATION
 -----------------------------------------------------------------------------------------
 
--- Listener setup
-scene:addEventListener( "create", scene )
-scene:addEventListener( "show", scene )
-scene:addEventListener( "hide", scene )
-scene:addEventListener( "destroy", scene )
+
 
 -- "destroyScene" event is dispatched before view is unloaded, which can be
 -- automatically unloaded in low memory situations, or explicitly via a call to
 -- storyboard.purgeScene() or storyboard.removeScene().
-scene:addEventListener( "destroyScene", scene )
+--scene:addEventListener( "destroyScene", scene )
 scene:addEventListener( "overlayEnded", scene )
 
 ------------------------------------------------------------------------------------------------------------------------------------
@@ -689,5 +706,11 @@ scene:addEventListener( "overlayEnded", scene )
 Runtime:addEventListener("enterFrame", updateScene)
 Runtime:addEventListener ( "collision", onGlobalCollision )
 Runtime:addEventListener("touch", drawSlashLine)
+
+-- Listener setup
+scene:addEventListener( "create", scene )
+scene:addEventListener( "show", scene )
+scene:addEventListener( "hide", scene )
+scene:addEventListener( "destroy", scene )
 
 return scene

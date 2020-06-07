@@ -18,13 +18,14 @@
 -- Require all of the external modules for this level
 ---------------------------------------------------------------
 local composer 			= require( "composer" )
-local scene 			= composer.newScene()
 local ui 				= require("ui")
 local widget 			= require("widget")
 local myGlobalData 		= require("globalData")
 local loadsave 			= require("loadsave")
 require "sprite"
 
+
+local scene 			= composer.newScene()
 ---------------------------------------------------------------
 -- Define our SCENE variables and sprite object variables
 ---------------------------------------------------------------
@@ -106,9 +107,18 @@ function scene:create( event )
 
 	iconMusic = display.newSprite( myGlobalData.imageSheet, myGlobalData.animationSequenceData )
 	iconMusic:setSequence( "iconMusic" )
-	iconMusic.alpha=1.0
 	iconMusic.x = buttonBase.x; iconMusic.y = buttonBase.y; iconMusic:play()
 	screenGroup:insert(iconMusic)
+	
+	if(myGlobalData.musicON==true) then
+	
+	iconMusic.alpha=1.0
+	
+	else
+	
+	iconMusic.alpha=0.5
+	
+	end
 	-------------------------------------------------------------------------------------------------------------
 
 	-------------------------------------------------------------------------------------------------------------
@@ -122,9 +132,18 @@ function scene:create( event )
 
 	iconSFX = display.newSprite( myGlobalData.imageSheet, myGlobalData.animationSequenceData )
 	iconSFX:setSequence( "iconSFX" )
-	iconSFX.alpha=1.0
 	iconSFX.x = buttonBase.x; iconSFX.y = buttonBase.y; iconSFX:play()
 	screenGroup:insert(iconSFX)
+	
+	if(myGlobalData.soundON==true) then
+	
+	iconSFX.alpha=1.0
+	
+	else
+	
+	iconSFX.alpha = 0.5
+	
+	end
 	-------------------------------------------------------------------------------------------------------------
 
 	-------------------------------------------------------------------------------------------------------------
@@ -219,10 +238,12 @@ function buttonMusicSwitch()
 		myGlobalData.musicON = false
 		myGlobalData.volumeMusic = 0.0
 		iconMusic.alpha = 0.5
+		
 	else
 		myGlobalData.musicON = true
-		myGlobalData.volumeMusic = previousMusicVolume
+		myGlobalData.volumeMusic = 1.0
 		iconMusic.alpha = 1.0
+	
 	end
 
 	--set the MUSIC channels volumes
@@ -244,10 +265,16 @@ function buttonSFXSwitch()
 		myGlobalData.soundON = false
 		myGlobalData.volumeSFX = 0.0
 		iconSFX.alpha = 0.5
+		
+		loadsave.saveTable(saveDataTable, "dbi_ctr_template_data.json")
+		
 	else
 		myGlobalData.soundON = true
-		myGlobalData.volumeSFX = previousSFXVolume
+		myGlobalData.volumeSFX = 1.0
 		iconSFX.alpha = 1.0
+		
+		loadsave.saveTable(saveDataTable, "dbi_ctr_template_data.json")
+		
 	end
 	
 	--set the SFX channels volumes
@@ -289,6 +316,8 @@ end
 ---------------------------------------------------------------
 function buttonBack()
 	audio.play(sfx_Select)
+	
+	
 	composer.gotoScene( "screenStart", "crossFade", 200  )
 	return true
 end
