@@ -53,7 +53,7 @@ local halfW 					= display.contentWidth*0.5
 ------------------------------------------------------------------------------------------------------------------------------------
 -- Define the Slash Effect Variables
 ------------------------------------------------------------------------------------------------------------------------------------
-local maxPoints 				= 2
+local maxPoints 				= 5
 local lineThickness 			= 8
 local lineFadeTime 				= 300
 local endPoints 				= {}
@@ -638,12 +638,12 @@ function drawSlashLine(event)
 			local area = display.newRect(v.x-10, v.y-8, 20, 8)
 			area.anchorX = 1.0		-- Graphics 2.0 Anchoring method
 			area.anchorY = 1.0		-- Graphics 2.0 Anchoring method
-			area.alpha=0.0; area.rotation = gotAngle
+			area.alpha=0.01; area.rotation = gotAngle
 			local myPhysics = physics.addBody(area, "static")
 			area.isSensor = true; area.objectType = 'SlashArea'
 			slashGroup:insert(line)
 			slashGroup:insert(area)
-			transition.to(line, {time = lineFadeTime, alpha = 0.5, xScale=0.7, yScale=0.7, onComplete = function(event) display.remove(line);line=nil;display.remove(area);area=nil end})		
+			transition.to(line, {time = lineFadeTime, alpha = 0.5, xScale=0.3, yScale=0.3, onComplete = function(event) display.remove(line);line=nil;display.remove(area);area=nil end})		
 		end
 
 		--Cleanup when completed

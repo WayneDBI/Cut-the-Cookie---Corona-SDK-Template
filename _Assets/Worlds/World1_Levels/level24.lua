@@ -52,7 +52,7 @@ local halfW 					= display.contentWidth*0.5
 ------------------------------------------------------------------------------------------------------------------------------------
 -- Define the Slash Effect Variables
 ------------------------------------------------------------------------------------------------------------------------------------
-local maxPoints 				= 2
+local maxPoints 				= 5
 local lineThickness 			= 8
 local lineFadeTime 				= 300
 local endPoints 				= {}
